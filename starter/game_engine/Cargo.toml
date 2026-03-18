@@ -8,7 +8,3 @@ cc = "1.2.56"
 
 [build-dependencies]
 cc = "1.0"
-
-[[test]]
-name = "integration_tests"
-harness = false
