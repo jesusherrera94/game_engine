@@ -20,7 +20,7 @@ pub struct Sprite {
 #[allow(non_camel_case_types)]
 pub enum GLFWwindow {}
 
-extern "C" {
+unsafe extern "C" {
     pub fn create_game_window(title: *const c_char, width: c_int, height: c_int);
     pub fn create_sprite(x: c_float, y: c_float, width: c_int, height: c_int, r: c_int, g: c_int, b: c_int) -> *mut Sprite;
     pub fn render_sprite(sprite: *mut Sprite);
