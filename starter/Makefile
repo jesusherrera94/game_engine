@@ -43,7 +43,7 @@ run-c: build-c
 	$(TEST_GAME_EXE)
 
 ifeq ($(UNAME_S), Darwin)
-    SET_LIB_PATH = export DYLD_LIBRARY_PATH=$(OUTPUT_DIR)
+    SET_LIB_PATH = export DYLD_LIBRARY_PATH=$(OUTPUT_DIR) && export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
 else
     SET_LIB_PATH = export LD_LIBRARY_PATH=$(OUTPUT_DIR)
 endif
@@ -51,7 +51,7 @@ endif
 .PHONY: test-rust
 test-rust:
 	@echo "Running Rust Tests Serially..."
-	$(SET_LIB_PATH) && cargo test --manifest-path ./game_engine/Cargo.toml tests::test_simple_game_loop -- --nocapture --ignored
+	$(SET_LIB_PATH) && cargo test --manifest-path ./game_engine/Cargo.toml --test integration_tests -- test_simple_game_loop
 #	$(SET_LIB_PATH) &&  cargo test --manifest-path ./game_engine/Cargo.toml tests::test_sprite_rendering -- --nocapture --ignored
 #	$(SET_LIB_PATH) &&  cargo test --manifest-path ./game_engine/Cargo.toml tests::test_screen_clearing -- --nocapture --ignored
 #	$(SET_LIB_PATH) &&  cargo test --manifest-path ./game_engine/Cargo.toml tests::test_key_presses -- --nocapture --ignored
