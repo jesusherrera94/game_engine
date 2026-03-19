@@ -1,5 +1,4 @@
-use std::os::raw::{c_char, c_int, c_float};
-
+use std::os::raw::{c_char, c_float, c_int};
 
 pub const GLFW_PRESS: c_int = 1;
 pub const GLFW_KEY_SPACE: c_int = 32;
@@ -22,7 +21,15 @@ pub enum GLFWwindow {}
 
 unsafe extern "C" {
     pub fn create_game_window(title: *const c_char, width: c_int, height: c_int);
-    pub fn create_sprite(x: c_float, y: c_float, width: c_int, height: c_int, r: c_int, g: c_int, b: c_int) -> *mut Sprite;
+    pub fn create_sprite(
+        x: c_float,
+        y: c_float,
+        width: c_int,
+        height: c_int,
+        r: c_int,
+        g: c_int,
+        b: c_int,
+    ) -> *mut Sprite;
     pub fn render_sprite(sprite: *mut Sprite);
     pub fn update_sprite_position(sprite: *mut Sprite, x: c_float, y: c_float);
     pub fn update_game_window();
@@ -43,7 +50,15 @@ pub fn safe_create_game_window(title: &str, width: i32, height: i32) {
     }
 }
 
-pub fn safe_create_sprite(x: f32, y: f32, width: i32, height: i32, r: i32, g: i32, b: i32) -> *mut Sprite {
+pub fn safe_create_sprite(
+    x: f32,
+    y: f32,
+    width: i32,
+    height: i32,
+    r: i32,
+    g: i32,
+    b: i32,
+) -> *mut Sprite {
     unsafe { create_sprite(x, y, width, height, r, g, b) }
 }
 

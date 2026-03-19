@@ -1,22 +1,19 @@
-
-use game_engine::{start_window_and_game_loop, spawn_sprite, on_key_press, move_sprite};
+use game_engine::{move_sprite, on_key_press, spawn_sprite, start_window_and_game_loop};
 
 fn main() {
+    let mut red_sprite = std::ptr::null_mut();
+    let mut y_start = 50.0;
     start_window_and_game_loop!(
-        "Sprite Demo", 400, 400,
+        "Open window /w moving sprite",
+        400,
+        400,
         {
-            // init: nothing extra needed here
+            red_sprite = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
         },
         {
-            // each frame
             game_engine::ffi::safe_clear_screen();
-
-            let sprite = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
-
-            let window = game_engine::ffi::safe_get_window();
-            on_key_press!(window, game_engine::ffi::GLFW_KEY_RIGHT, || {
-                move_sprite!(sprite, 1.0, 0.0, true);
-            });
+            move_sprite!(red_sprite, 100.0, y_start);
+            y_start += 1.0;
         },
         {
             println!("Window closed.");
