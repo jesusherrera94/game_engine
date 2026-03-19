@@ -1,14 +1,25 @@
 
+use game_engine::{start_window_and_game_loop, spawn_sprite, on_key_press, move_sprite};
+
 fn main() {
-        game_engine::ffi::safe_create_game_window("Sprite Position Update Test", 400, 400);
-        let sprite = game_engine::ffi::safe_create_sprite(50.0, 50.0, 50, 50, 255, 0, 0);
-        let mut x = 50.0;
-        while !game_engine::ffi::safe_window_should_close() {
+    start_window_and_game_loop!(
+        "Sprite Demo", 400, 400,
+        {
+            // init: nothing extra needed here
+        },
+        {
+            // each frame
             game_engine::ffi::safe_clear_screen();
-            game_engine::ffi::safe_render_sprite(sprite);
-            game_engine::ffi::safe_update_game_window();
-            x += 1.0;
-            game_engine::ffi::safe_update_sprite_position(sprite, x, 50.0);
-            std::thread::sleep(std::time::Duration::from_millis(16));
+
+            let sprite = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
+
+            let window = game_engine::ffi::safe_get_window();
+            on_key_press!(window, game_engine::ffi::GLFW_KEY_RIGHT, || {
+                move_sprite!(sprite, 1.0, 0.0, true);
+            });
+        },
+        {
+            println!("Window closed.");
         }
+    );
 }

@@ -1,115 +1,102 @@
-//! Game engine helper macros.
-//!
-//! These macros wrap frequent FFI-based operations such as spawning sprites,
-//! moving them, ticking frames, handling input, and managing the main game loop.
-//! Their goal is to make Rust-side game scripting concise and expressive.
-
-/// Spawn a sprite, render it immediately, and return its pointer.
+/// Spawn a sprite at the given position/size/color, render it, and return its pointer.
 ///
-/// # Example
 /// ```ignore
 /// let player = spawn_sprite!(50.0, 60.0, 48, 48, 255, 100, 0);
 /// ```
 #[macro_export]
 macro_rules! spawn_sprite {
     ($x:expr, $y:expr, $w:expr, $h:expr, $r:expr, $g:expr, $b:expr) => {{
-        let s_ptr = ffi::rust_create_sprite($x, $y, $w, $h, $r, $g, $b);
-        ffi::rust_render_sprite(s_ptr);
-        s_ptr
+        let sprite = $crate::ffi::safe_create_sprite($x, $y, $w, $h, $r, $g, $b);
+        $crate::ffi::safe_render_sprite(sprite);
+        sprite
     }};
 }
 
-/// Move an existing sprite to a new position.  
-/// Optionally clears the screen before movement.
+/// End-of-frame tick: swap buffers and sleep ~16 ms (~60 FPS).
 ///
-/// # Example
-/// ```ignore
-/// move_sprite!(sprite, 250.0, 180.0);
-/// move_sprite!(sprite, 250.0, 180.0, true);
-/// ```
-#[macro_export]
-macro_rules! move_sprite {
-    ($sprite:expr, $x:expr, $y:expr) => {{
-        ffi::rust_update_sprite_position($sprite, $x, $y);
-        ffi::rust_render_sprite($sprite);
-    }};
-    ($sprite:expr, $x:expr, $y:expr, $do_clear:expr) => {{
-        if $do_clear {
-            ffi::rust_clear_screen();
-        }
-        ffi::rust_update_sprite_position($sprite, $x, $y);
-        ffi::rust_render_sprite($sprite);
-    }};
-}
-
-/// Run one frame of the engine loop (update window + maintain ~60 FPS).  
-///
-/// # Example
 /// ```ignore
 /// tick!();
 /// ```
 #[macro_export]
 macro_rules! tick {
     () => {{
-        ffi::rust_update_game_window();
+        $crate::ffi::safe_update_game_window();
         std::thread::sleep(std::time::Duration::from_millis(16));
     }};
 }
 
-/// Invoke a closure when a key is detected as pressed.
+/// Move an existing sprite to a new position and re-render it.
+/// An optional fourth argument (`true`) clears the screen first.
 ///
-/// # Example
 /// ```ignore
-/// on_key_press!(window, ffi::GLFW_KEY_UP, || move_up());
+/// move_sprite!(sprite, 100.0, 200.0);          // move only
+/// move_sprite!(sprite, 100.0, 200.0, true);     // clear then move
+/// ```
+#[macro_export]
+macro_rules! move_sprite {
+    ($sprite:expr, $x:expr, $y:expr) => {{
+        $crate::ffi::safe_update_sprite_position($sprite, $x, $y);
+        $crate::ffi::safe_render_sprite($sprite);
+    }};
+    ($sprite:expr, $x:expr, $y:expr, $do_clear:expr) => {{
+        if $do_clear {
+            $crate::ffi::safe_clear_screen();
+        }
+        $crate::ffi::safe_update_sprite_position($sprite, $x, $y);
+        $crate::ffi::safe_render_sprite($sprite);
+    }};
+}
+
+/// Execute an action when a key is currently pressed.
+///
+/// ```ignore
+/// let window = game_engine::ffi::safe_get_window();
+/// on_key_press!(window, game_engine::ffi::GLFW_KEY_UP, || {
+///     println!("Up!");
+/// });
 /// ```
 #[macro_export]
 macro_rules! on_key_press {
     ($window:expr, $key:expr, $action:expr) => {{
-        if ffi::rust_get_key($window, $key) == ffi::GLFW_PRESS {
+        if $crate::ffi::safe_get_key($window, $key) == $crate::ffi::GLFW_PRESS as i32 {
             $action();
         }
     }};
 }
 
-/// Create a window and run the main game loop with custom init, update, and cleanup logic.
+/// Create a window, run an init block, loop until the window closes
+/// (calling tick! each frame), then run a cleanup block.
 ///
-/// # Example
 /// ```ignore
 /// start_window_and_game_loop!(
-///     "Asteroid Run", 1280, 720,
-///     {
-///         println!("Game initialized!");
-///     },
-///     {
-///         println!("Frame running!");
-///     },
-///     {
-///         println!("Game ended!");
-///     }
+///     "My Game", 1280, 720,
+///     { /* init */ },
+///     { /* each frame */ },
+///     { /* cleanup */ }
 /// );
 /// ```
 ///
-/// If no name or dimensions are provided, defaults are used:
+/// A shorter form uses defaults (title "Game", 1024×768):
 /// ```ignore
-/// start_window_and_game_loop!({},{},{});
+/// start_window_and_game_loop!({ }, { }, { });
 /// ```
 #[macro_export]
 macro_rules! start_window_and_game_loop {
     ($title:expr, $width:expr, $height:expr, $init:block, $frame:block, $cleanup:block) => {{
-        ffi::rust_create_game_window($title, $width, $height);
+        $crate::ffi::safe_create_game_window($title, $width, $height);
         $init
-        while !ffi::rust_window_should_close() {
+        while !$crate::ffi::safe_window_should_close() {
             $frame
-            tick!();
+            $crate::tick!();
         }
         $cleanup
     }};
     ($init:block, $frame:block, $cleanup:block) => {{
-        ffi::rust_create_game_window("Untitled Demo", 1024, 768);
+        $crate::ffi::safe_create_game_window("Game", 1024, 768);
         $init
-        while !ffi::rust_window_should_close() {
+        while !$crate::ffi::safe_window_should_close() {
             $frame
-            tick!();
+            $crate::tick!();
         }
         $cleanup
     }};
