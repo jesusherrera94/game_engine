@@ -1,10 +1,5 @@
-# Building a Game Engine with Rust from the Ground Up
-
-This repository serves as the starting point for building a simple yet functional game engine using Rust. The project is designed to help you apply the concepts and skills you've learned throughout the Rust course. By completing this project, you'll gain hands-on experience with Rust's advanced features, including multi-threading, macros, and interoperability with C code.
-
-## Getting Started
-
-When working on this project, you can choose between utilizing Udacity's VM environment or setting it all up on your local machine. If you prefer to use the Udacity VM, you can skip the local environment prerequisite steps and jump straight to the project instructions.
+# Game Engine with C and Rust
+This project is for the Udacity's Introduction to Rust course.
 
 ### Local environment prerequisites
 
@@ -25,8 +20,14 @@ sudo apt install build-essential
 
 Finally, you'll need to have GLFW installed in your machine. GLFW is a C library that will be the foundation of our game engine. You can install it with:
 
+#### Linux
 ```bash
 sudo apt install libglfw3 libglfw3-dev
+```
+
+#### Mac
+```bash
+sudo brew install glfw 
 ```
 
 ### Running the Test C Game
@@ -34,8 +35,8 @@ sudo apt install libglfw3 libglfw3-dev
 To start with your project, clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/udacity/intro-to-rust-starter.git
-# or, git clone git@github.com:udacity/intro-to-rust-starter.git
+git https://github.com/jesusherrera94/game_engine.git
+# or, git clone git@github.com:jesusherrera94/game_engine.git
 ```
 
 To ensure you are set up correctly, you can run the test C game that comes with this project. You can build and run the test game with:
@@ -51,9 +52,15 @@ You should see the following pop-up window:
 
 ### Starting the Rust Game Engine
 
-With this done, we are ready to start creating our game engine project. Inside the `starter` folder, create a new Rust library project called `my_game_engine` (or whatever name you prefer), and then refer to the project instructions in the Udacity website to start building your game engine.
+At this point you may be able to run this project, to test the engine running in a binary crate run the following commands:
+```bash
+cd starter/rust_test_game
+cargo run
+```
 
-> Note: If you choose another name for your engine, you must update the references to `my_game_engine` in the `starter` folder's `Makefile` to reflect the new name.
+You should see something similar everytime you press the ```space``` key on your keyboard.
+
+![readme_image_assets/img2.png](readme_image_assets/img2.png)
 
 ## License
 
