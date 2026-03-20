@@ -24,9 +24,9 @@ mod tests {
             400,
             {},
             {
-                game_engine::ffi::safe_clear_screen();
-                let sprite = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
-                let window = game_engine::ffi::safe_get_window();
+                ffi::safe_clear_screen();
+                let _ = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
+                let _ = ffi::safe_get_window();
             },
             {
                 println!("Window closed.");
@@ -50,11 +50,11 @@ mod tests {
                 green_sprite = spawn_sprite!(50.0, 50.0, 50, 50, 0, 255, 0);
             },
             {
-                game_engine::ffi::safe_clear_screen();
+                ffi::safe_clear_screen();
                 if start_time.elapsed().as_secs() < 5 {
-                    game_engine::ffi::safe_render_sprite(red_sprite);
+                    ffi::safe_render_sprite(red_sprite);
                 } else {
-                    game_engine::ffi::safe_render_sprite(green_sprite);
+                    ffi::safe_render_sprite(green_sprite);
                 }
             },
             {
@@ -75,14 +75,14 @@ mod tests {
             {},
             {
                 // each frame
-                game_engine::ffi::safe_clear_screen();
+                ffi::safe_clear_screen();
 
-                let window = game_engine::ffi::safe_get_window();
-                on_key_press!(window, game_engine::ffi::GLFW_KEY_UP, || {
+                let window = ffi::safe_get_window();
+                on_key_press!(window, ffi::GLFW_KEY_UP, || {
                     println!("Up!");
                     up_key_pressed = true;
                 });
-                on_key_press!(window, game_engine::ffi::GLFW_KEY_DOWN, || {
+                on_key_press!(window, ffi::GLFW_KEY_DOWN, || {
                     println!("Down!");
                     down_key_pressed = true;
                 });
@@ -109,7 +109,7 @@ mod tests {
                 red_sprite = spawn_sprite!(50.0, 50.0, 50, 50, 255, 0, 0);
             },
             {
-                game_engine::ffi::safe_clear_screen();
+                ffi::safe_clear_screen();
                 move_sprite!(red_sprite, 100.0, y_start);
                 y_start += 1.0;
             },
