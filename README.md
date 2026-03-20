@@ -62,6 +62,8 @@ You should see something similar everytime you press the ```space``` key on your
 
 ![readme_image_assets/img2.png](readme_image_assets/img2.png)
 
+All the changes to the engine can be done in ```/starter/game_engine/src/ffi.rs``` or ```/starter/game_engine/src/macro.rs```
+
 ## License
 
 [License](LICENSE.txt)
